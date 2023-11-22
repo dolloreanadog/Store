@@ -1,166 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <!-- Scale to monitor-->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music Store</title>
+    <meta charset="UTF-8">
+    <!-- Scale to monitor-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Store</title>
 
-  <!-- Store all audio here, didn't help at all-->
-  <audio src="Alinut-Interestica.mp3"></audio>
-  <audio src="An-Phreakers Media.mp3"></audio>
-  <audio src="An-Ved.mp3"></audio>
-  <audio src="Armored Core 3-Artificial Sky III.mp3"></audio>
-  <audio src="Armored Core for Answer-I Can See All.mp3"></audio>
-  <style>
-    /*Start CSS to style page*/
-    /*Styles the body*/
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      /*Credit Author: tenca 天華*/
-      /*background-image: url(background-image.jpg);*/
-      background-repeat: no-repeat;
-      background-size: cover;
-      margin: 0;
-      padding: 20px;
-    }
-
-    #game-container {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      background-color: rgba(245, 245, 245, 0.295);
-      border: 1px solid white;
-    }
-
-    .song {
-      border: 1px solid white;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 4px;
-    }
-
-    button {
-      padding: 5px 10px;
-      margin-top: 10px;
-    }
-  </style>
+    <!-- Store all audio here-->
+    <audio src ="Alinut-Interestica.mp3"></audio>
+    <audio src ="An-Phreakers Media.mp3"></audio>
+    <audio src ="An-Ved.mp3"></audio>
+    <audio src ="Armored Core 3-Artificial Sky III.mp3"></audio>
+    <audio src ="Armored Core for Answer-I Can See All.mp3"></audio>
+    <style>
+        /*Start CSS to style page*/
+        /*Styles the body*/
+        body{
+            font-family: 'Courier New', Courier, monospace;
+            /*Credit Author: tenca 天華*/
+            /*background-image: url(background-image.jpg);*/
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+        }
+        #game-container{
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: rgba(245, 245, 245, 0.295);
+            border: 1px solid white;
+        }
+        .song{
+            border: 1px solid white;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        button{
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <!-- Body Section-->
-
 <body>
-  <!-- Starting text for here-->
-  <div id="game-container">
-    <!-- Title of Webpage & credit artist-->
-    <h1>Music Store</h1>
-    <h2>Art by tenca 天華</h2>
-    <!-- Introduction-->
-    <div id="directions">
-      <p>Welcome to the Music Store, Great place to find & purchase music!</p>
-      <p>To purchase a song click on the song you want to buy</p>
+    <!-- Starting text for here-->
+    <div id="game-container">
+        <!-- Title of Webpage & credit artist-->
+        <h1>Music Store</h1>
+        <h2>Art by tenca 天華</h2>
+        <!-- Introduction-->
+        <div id="directions">
+            <p>Welcome to the Music Store, Great place to find & purchase music!</p>
+            <p>To purchase a song click on the song you want to buy</p>
+        </div>
+        <!-- To show money to purchase items-->
+        <div id="money">
+            <h2>$ <span id="money-amount">1000</span></h2>
+        </div>
+        <!-- Create list of songs-->
+        <div id="songs-container">
+            <!-- Javascript to add song list-->
+        </div>
     </div>
-    <!-- To show money to purchase items-->
-    <div id="money">
-      <h2>$ <span id="money-amount">1000</span></h2>
-    </div>
-    <!-- Create list of songs-->
-    <div id="songs-container">
-      <!-- Javascript to add song list-->
-    </div>
-  </div>
-  <!-- Javascript Start-->
-  <script>
-    //create class for Songs
-    class Song {
-      constructor(name, cost, songFile) {
-        this.name = name;
-        this.cost = cost;
-        this.songFile = songFile;
-        this.isPlaying = false; // Add a property to track if the song is playing
-        this.audio = new Audio(this.songFile); // Create the audio object
-      }
+    <!-- Javascript Start-->
+    <script>
+        //create class for Songs
+        class Song{
+            constructor(name, cost, songFile){
+                this.name = name;
+                this.cost = cost;
+                this.songFile = songFile
+                
+            }
+            //method, function part of a class
+            //remove money from us
+            buy(){
+                game.money = game.money - this.cost
+                game.updateMoneyDisplay();
+            }
+            playSong(){
+                let beat = new Audio(this.songFile);
+                beat.play()
+            }
+            stopSong(){
+                let beat = new Audio(this.songFile);
+                beat.pause()
+                beat.currentTime = 0;
+            }
 
-      buy() {
-        game.money -= this.cost;
-        game.updateMoneyDisplay();
-      }
-
-      playSong() {
-        if (!this.isPlaying) {
-          this.audio.play();
-          this.isPlaying = true;
         }
-      }
+        //Game class
+        class Game{
+            constructor(){
+                this.money = 1000;
+                this.songs=[];
+            }
+            // To visualize how much money you have
+            updateMoneyDisplay(){
+                document.getElementById("money-amount").innerHTML = this.money
+            }
+            // to add existence to a ship to page
+            addSong(song){
+                this.songs.push(song);
+                this.displaySong(song);
+            }
+            // display ship to page
+            displaySong(song){
+                const container = document.getElementById("songs-container")
+                const songDiv = document.createElement("div");
+                songDiv.classList.add("song")
+                songDiv.innerHTML = "<h2>" + song.name + "</h2><p>Cost: $" + song.cost;
+                    songDiv.onclick = function(){
+                        song.buy();
+                        song.playSong();
+                    };
+                    container.appendChild(songDiv);
+            }
 
-      stopSong() {
-        if (this.isPlaying) {
-          this.audio.pause();
-          this.audio.currentTime = 0;
-          this.isPlaying = false;
+
         }
-      }
-    }
-    //Game class
-    class Game {
-      constructor() {
-        this.money = 1000;
-        this.songs = [];
-      }
-      // To visualize how much money you have
-      updateMoneyDisplay() {
-        document.getElementById("money-amount").innerHTML = this.money
-      }
-      // to add existence to a song to page
-      addSong(song) {
-        this.songs.push(song);
-        this.displaySong(song);
-      }
-      // display song to page
-      displaySong(song) {
-        const container = document.getElementById("songs-container");
-        const songDiv = document.createElement("div");
-        songDiv.classList.add("song");
-        songDiv.innerHTML = "<h2>" + song.name + "</h2><p>Cost: $" + song.cost;
-        songDiv.onclick = function () {
-          song.buy();
-          if (song.isPlaying) {
-            song.stopSong(); // Stop the song if it's already playing
-          } else {
-            songs.forEach((s) => {
-              if (s !== song) {
-                s.stopSong(); // Stop other songs
-              }
-            });
-            song.playSong(); // Play the clicked song
-          }
-        };
-        container.appendChild(songDiv);
-      }
 
+        // New Game instance from class
+        const game = new Game();
 
-    }
+        // Create new song instance from class
+        const songs = [
+            new Song("song1", 20, "Alinut-Interestica.mp3"),
+            new Song("song2", 40, "An-Phreakers Media.mp3"),
+            new Song("song3", 12, "An-Ved.mp3"),
+            new Song("song4", 32, "Armored Core for Answer-I Can See All.mp3"),
+            new Song("song5", 16, "Armored Core 3-Artificial Sky III.mp3")
+        ];
 
-    // New Game instance from class
-    const game = new Game();
+        // get a random backround whenever loading into the store
+        const backrounds = Array("background-image.jpg", "background-image_1.jpg", 'background-image_2.jpg', 'background-image_3.jpg', 'background-image_4.jpg', 'background-image_5.jpg');
+        var background = backrounds[Math.floor(Math.random()*backrounds.length)];
+        document.body.style.backgroundImage = "url(" + background + ")";
 
-    // Create new song instance from class
-    const songs = [
-      new Song("song1", 20, "Alinut-Interestica.mp3"),
-      new Song("song2", 40, "An-Phreakers Media.mp3"),
-      new Song("song3", 12, "An-Ved.mp3"),
-      new Song("song4", 32, "Armored Core for Answer-I Can See All.mp3"),
-      new Song("song5", 16, "Armored Core 3-Artificial Sky III.mp3")
-    ];
+        // Add all songs to the game
+        songs.forEach(song => game.addSong(song));
 
-    // Make an array that will pick backround at random when loading in
-    const backrounds = Array("background-image.jpg", "background-image_1.jpg", 'background-image_2.jpg', 'background-image_3.jpg', 'background-image_4.jpg', 'background-image_5.jpg');
-    var background = backrounds[Math.floor(Math.random()*backrounds.length)];
-    document.body.style.backgroundImage = "url(" + background + ")"; // This will change the background
-
-    // Add all songs to the game
-    songs.forEach(song => game.addSong(song));
-  </script>
+    </script>
 </body>
-
 </html>
